@@ -1,0 +1,9 @@
+{
+  "name": "sits",
+  "version": "0.0.1",
+  "main": "index.js",
+  "typings": "index.d.js",
+  "repository": "https://github.com/fightingcat/sits.git",
+  "author": "fightingcat <7307154@gmail.com>",
+  "license": "MIT"
+}
