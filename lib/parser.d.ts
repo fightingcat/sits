@@ -41,11 +41,11 @@ declare namespace sits.parser {
     type PeekToken<Context> =
         Context extends ParserContext<infer Tokens, infer Return>
         ? Return extends SyntaxError ? "ERROR"
+        : Tokens extends [] ? "EOF"
         : Tokens extends { 0: Keywords } ? Tokens[0]
         : Tokens extends { 0: string } ? "identifier"
         : Tokens extends { 0: Literals } ? "literal"
-        : Tokens extends [] ? "EOF"
-        : "unkown" : "unkown";
+        : "unknown" : never;
 
     type Scan<Context, Expect> =
         Context extends ParserContext<infer Tokens, infer Return>
