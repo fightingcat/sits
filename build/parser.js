@@ -321,11 +321,18 @@ function output_drop(n) {
 
 const template = read_comment(() => {
   /*
-  import { PickByType, ReplaceAll } from "./helpers";
+  import {
+    ImitatedSet,
+    ImitatedSetAdd,
+    ImitatedSetFind,
+    ImitatedSetNew,
+    ReplaceAll,
+  } from "./helpers";
   import { Scan } from "./lexer";
   import { Incr, IncrU8 } from "./math";
 
-  export type Parse<Source extends string> = ParseImpl<Source, List<0>, List<"">, [], [], "0", 0>;
+  export type Parse<Source extends string> = //br
+    ParseImpl<Source, List<0>, List<"">, [], ImitatedSetNew, "0", 0>;
 
   type Throw<Error, Source, States, Output> = {
     error: Error,
@@ -336,17 +343,12 @@ const template = read_comment(() => {
 
   type List<T, P = any> = { 0: T, 1: P };
 
-  type GetStringId<
-    ROData extends string[],
-    String extends string
-  > = PickByType<ROData, String>[number] extends never
-    ? ROData["length"]
-    : PickByType<ROData, String>[number];
+  type STRSet = ImitatedSet<string>;
 
-  type EmitString<
-    ROData extends string[],
-    String extends string
-  > = String extends ROData[number] ? ROData : [...ROData, String];
+  type GetStringId<ROData extends STRSet, String extends string> =
+    ImitatedSetFind<ROData, String> extends ""
+    ? ROData["size"]
+    : ImitatedSetFind<ROData, String>;
 
   type EmitFunction<
     Chunks extends string[],
@@ -417,7 +419,7 @@ const template = read_comment(() => {
     States extends List<number>,
     Output extends List<string>,
     Chunks extends string[],
-    ROData extends string[],
+    ROData extends STRSet,
     UniqId extends string,
     Counter extends IncrU8[number],
   > = Counter extends 255
@@ -431,7 +433,7 @@ const template = read_comment(() => {
     States extends List<number>,
     Output extends List<string>,
     Chunks extends string[],
-    ROData extends string[],
+    ROData extends STRSet,
     UniqId extends string,
     Counter extends IncrU8[number]
   > = $GOTOS$
@@ -500,7 +502,7 @@ Object.keys(closure_id_to_items).forEach((closure_id) => {
     });
 
     output = output.replace(/#STRING\((.+)\)/, (_, s) => {
-      rodata = `EmitString<ROData, ${subst_symbol(s)}>`;
+      rodata = `ImitatedSetAdd<ROData, ${subst_symbol(s)}>`;
       return `\${ GetStringId<ROData, ${subst_symbol(s)}> }`;
     });
 

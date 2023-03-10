@@ -1,6 +1,4 @@
-export type PickByType<Object, Type> = {
-  [K in keyof Object]: Object[K] extends Type ? K : never;
-};
+import { Incr } from "./math";
 
 export type ReplaceAll<
   String extends string,
@@ -12,8 +10,6 @@ export type ReplaceAll<
   : `${Result}${String}`;
 
 type _ = string;
-
-export type List<T, P = any> = { 0: T; 1: P };
 
 // For object imitation.
 
@@ -75,3 +71,33 @@ export type GetItemNearBy<
 > = Storage extends `${infer Storage}#${_}`
   ? GetItem<Storage, Mark, Key>
   : GetItem<Storage, Mark, Key>;
+
+// Use this instead of tuples to reduce type instantiations.
+
+export type ImitatedSet<T = unknown> = { size: string; items: { k: string; v: T } };
+
+export type ImitatedSetNew = { size: "0"; items: never };
+
+export type ImitatedSetAdd<Set extends ImitatedSet, Val> = Val extends Set["items"]["v"]
+  ? Set
+  : { size: Incr<Set["size"]>; items: Set["items"] | { k: Set["size"]; v: Val } };
+
+export type ImitatedSetGet<
+  Set extends ImitatedSet,
+  Key extends string,
+> = Set["items"] extends infer T
+  ? T extends { k: Key; v: infer Val }
+    ? Val
+    : never
+  : never;
+
+export type ImitatedSetFind<
+  Set extends ImitatedSet,
+  Val extends string,
+> = String extends Set["items"]["v"]
+  ? Set["items"] extends infer Items
+    ? Items extends { 0: infer I; 1: Val }
+      ? I
+      : never
+    : never
+  : "";

@@ -1,16 +1,15 @@
-import { PickByType, ReplaceAll } from "./helpers";
+import {
+  ImitatedSet,
+  ImitatedSetAdd,
+  ImitatedSetFind,
+  ImitatedSetNew,
+  ReplaceAll,
+} from "./helpers";
 import { Scan } from "./lexer";
 import { Incr, IncrU8 } from "./math";
 
-export type Parse<Source extends string> = ParseImpl<
-  Source,
-  List<0>,
-  List<"">,
-  [],
-  [],
-  "0",
-  0
->;
+export type Parse<Source extends string> = //br
+  ParseImpl<Source, List<0>, List<"">, [], ImitatedSetNew, "0", 0>;
 
 type Throw<Error, Source, States, Output> = {
   error: Error;
@@ -21,17 +20,14 @@ type Throw<Error, Source, States, Output> = {
 
 type List<T, P = any> = { 0: T; 1: P };
 
-type GetStringId<ROData extends string[], String extends string> = PickByType<
+type STRSet = ImitatedSet<string>;
+
+type GetStringId<ROData extends STRSet, String extends string> = ImitatedSetFind<
   ROData,
   String
->[number] extends never
-  ? ROData["length"]
-  : PickByType<ROData, String>[number];
-
-type EmitString<
-  ROData extends string[],
-  String extends string,
-> = String extends ROData[number] ? ROData : [...ROData, String];
+> extends ""
+  ? ROData["size"]
+  : ImitatedSetFind<ROData, String>;
 
 type EmitFunction<
   Chunks extends string[],
@@ -326,7 +322,7 @@ type ParseImpl<
   States extends List<number>,
   Output extends List<string>,
   Chunks extends string[],
-  ROData extends string[],
+  ROData extends STRSet,
   UniqId extends string,
   Counter extends IncrU8[number],
 > = Counter extends 255
@@ -3392,7 +3388,7 @@ type ParseImpl<
         Drop1<States>,
         List<`get_const s:${GetStringId<ROData, Output[0]>};`, Drop1<Output>>,
         Chunks,
-        EmitString<ROData, Output[0]>,
+        ImitatedSetAdd<ROData, Output[0]>,
         UniqId,
         IncrU8[Counter]
       >
@@ -3420,7 +3416,7 @@ type ParseImpl<
           Drop3<Output>
         >,
         Chunks,
-        EmitString<ROData, Output[0]>,
+        ImitatedSetAdd<ROData, Output[0]>,
         UniqId,
         IncrU8[Counter]
       >
@@ -7827,7 +7823,7 @@ type ParseImpl<
           Drop3<Output>
         >,
         Chunks,
-        EmitString<ROData, Drop2<Output>[0]>,
+        ImitatedSetAdd<ROData, Drop2<Output>[0]>,
         UniqId,
         IncrU8[Counter]
       >
@@ -7946,7 +7942,7 @@ type ParseImpl<
           Drop3<Output>
         >,
         Chunks,
-        EmitString<ROData, Drop2<Output>[0]>,
+        ImitatedSetAdd<ROData, Drop2<Output>[0]>,
         UniqId,
         IncrU8[Counter]
       >
@@ -8237,7 +8233,7 @@ type ParseGoto<
   States extends List<number>,
   Output extends List<string>,
   Chunks extends string[],
-  ROData extends string[],
+  ROData extends STRSet,
   UniqId extends string,
   Counter extends IncrU8[number],
 > = States[0] extends 0
