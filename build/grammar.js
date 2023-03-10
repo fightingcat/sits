@@ -2,6 +2,7 @@ module.exports = {
   start_symbol: `Start`,
   end_symbol: `EOF`,
   aliases: {
+    literals: ["undefined", "null", "true", "false", "NaN", "Infinity"],
     compound: [`+=`, `-=`, `*=`, `/=`, `%=`],
     equality: [`==`, `!=`],
     comparison: [`<`, `>`, `<=`, `>=`],
@@ -470,6 +471,12 @@ module.exports = {
       rule: `FunctionExpression -> function identifier FunctionImpl`,
       emit: `
         new_closure #FUNCTION(FunctionImpl, identifier);
+      `,
+    },
+    {
+      rule: `Expression -> literals`,
+      emit: `
+        get_const {literals};
       `,
     },
     {
