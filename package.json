@@ -4,6 +4,13 @@
   "main": "index.js",
   "typings": "index.d.js",
   "repository": "https://github.com/fightingcat/sits.git",
-  "author": "fightingcat <7307154@gmail.com>",
-  "license": "MIT"
+  "author": "fightingcat <knightcat.sq@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "build": "node ./build/parser.js"
+  }
 }

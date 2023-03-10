@@ -1,9 +1,11 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "noEmit": true
-    },
-    "include": [
-        "lib"
-    ]
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "strict": true,
+    "noEmit": true,
+    "types": []
+  },
+  "include": ["lib"]
 }
+ 
