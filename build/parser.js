@@ -316,7 +316,7 @@ function output_union(symbols) {
 }
 
 function output_drop(n) {
-  types_drop.add(`type Drop${n}<T extends List<any>> = T${"[1]".repeat(n)};`);
+  types_drop.add(`type Drop${n}<T extends List<unknown>> = T${"[1]".repeat(n)};`);
 }
 
 const template = read_comment(() => {
@@ -332,7 +332,7 @@ const template = read_comment(() => {
   import { Incr, IncrU8 } from "./math";
 
   export type Parse<Source extends string> = //br
-    ParseImpl<Source, List<0>, List<"">, [], ImitatedSetNew, "0", 0>;
+    ParseImpl<Source, { 0: 0, 1: never }, { 0: "", 1: never }, [], ImitatedSetNew, "0", 0>;
 
   type Throw<Error, Source, States, Output> = {
     error: Error,
@@ -341,12 +341,12 @@ const template = read_comment(() => {
     output: Output,
   };
 
-  type List<T, P = any> = { 0: T, 1: P };
+  type List<T> = { 0: T, 1: List<T> };
 
-  type STRSet = ImitatedSet<string>;
-
-  type GetStringId<ROData extends STRSet, String extends string> =
-    ImitatedSetFind<ROData, String> extends ""
+  type GetStringId<
+    ROData extends ImitatedSet<string>,
+    String extends string
+  > = ImitatedSetFind<ROData, String> extends ""
     ? ROData["size"]
     : ImitatedSetFind<ROData, String>;
 
@@ -419,7 +419,7 @@ const template = read_comment(() => {
     States extends List<number>,
     Output extends List<string>,
     Chunks extends string[],
-    ROData extends STRSet,
+    ROData extends ImitatedSet<string>,
     UniqId extends string,
     Counter extends IncrU8[number],
   > = Counter extends 255
@@ -433,7 +433,7 @@ const template = read_comment(() => {
     States extends List<number>,
     Output extends List<string>,
     Chunks extends string[],
-    ROData extends STRSet,
+    ROData extends ImitatedSet<string>,
     UniqId extends string,
     Counter extends IncrU8[number]
   > = $GOTOS$
@@ -536,8 +536,8 @@ Object.keys(closure_id_to_items).forEach((closure_id) => {
       reduce_cases.push(
         `Scan<Source>[1] extends ${lookah} ? ParseImpl<
           Source,
-          List<${state}, States>,
-          List<${output}, Output>,
+          { 0: ${state}, 1: States },
+          { 0: ${output}, 1: Output },
           ${chunks},
           ${rodata},
           ${uniqid},
@@ -552,7 +552,7 @@ Object.keys(closure_id_to_items).forEach((closure_id) => {
         Source,
         "${lhs}",
         Drop${rhs.length}<States>,
-        List<${output}, Drop${rhs.length}<Output>>,
+        { 0: ${output}, 1: Drop${rhs.length}<Output> },
         ${chunks},
         ${rodata},
         ${uniqid},
@@ -570,8 +570,8 @@ Object.keys(closure_id_to_items).forEach((closure_id) => {
     shift_cases.push(
       `Scan<Source>[1] extends ${output_union(lookahead)} ? ParseImpl<
         Scan<Source>[0],
-        List<${state}, States>,
-        List<Scan<Source>[2], Output>,
+        { 0: ${state}, 1: States },
+        { 0: Scan<Source>[2], 1: Output },
         Chunks,
         ROData,
         UniqId,
@@ -600,7 +600,7 @@ Object.keys(closure_id_to_items).forEach((closure_id) => {
 
     goto_cases.push(
       `Symbol extends ${union} ? ParseImpl<
-        Source, List<${next_state}, States>, Output, Chunks, ROData, UniqId, Counter>`,
+        Source, { 0: ${next_state}, 1: States }, Output, Chunks, ROData, UniqId, Counter>`,
     );
   });
 
@@ -616,7 +616,7 @@ Object.keys(closure_id_to_items).forEach((closure_id) => {
   console.log(`\nstate ${curr_state}:`);
 
   Object.values(closure_items).forEach((item) => {
-    console.log("    " + trace_item(item, true));
+    console.log(`    ${trace_item(item, true)}`);
   });
 });
 
