@@ -423,7 +423,7 @@ const template = read_comment(() => {
     UniqId extends string,
     Counter extends IncrU8[number],
   > = Counter extends 255
-    ? NonNullable<ParseImpl<Source, States, Output, Chunks, ROData, UniqId, 0>>
+    ? ParseImpl<Source, States, Output, Chunks, ROData, UniqId, 0> & {}
     : $ACTIONS$
     : Throw<`Unexpected lookahead: "${Scan<Source>[1]}".`, Source, States, Output>;
 

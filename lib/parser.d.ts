@@ -332,7 +332,7 @@ type ParseImpl<
   UniqId extends string,
   Counter extends IncrU8[number],
 > = Counter extends 255
-  ? NonNullable<ParseImpl<Source, States, Output, Chunks, ROData, UniqId, 0>>
+  ? ParseImpl<Source, States, Output, Chunks, ROData, UniqId, 0> & {}
   : States[0] extends 0
   ? Scan<Source>[1] extends Union0
     ? ParseImpl<
